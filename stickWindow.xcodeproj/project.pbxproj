@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		135E9B0321BE700300275E88 /* main.swift in Sources */ = {isa = PBXBuildFile; fileRef = 135E9B0221BE700300275E88 /* main.swift */; };
+		13E189EE21BF87C700111CFD /* ProcessManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 13E189ED21BF87C700111CFD /* ProcessManager.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -25,6 +26,8 @@
 /* Begin PBXFileReference section */
 		135E9AFF21BE700300275E88 /* stickWindow */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = stickWindow; sourceTree = BUILT_PRODUCTS_DIR; };
 		135E9B0221BE700300275E88 /* main.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = main.swift; sourceTree = "<group>"; };
+		13E189EC21BE8E1100111CFD /* Entitlements.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = Entitlements.entitlements; sourceTree = "<group>"; };
+		13E189ED21BF87C700111CFD /* ProcessManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProcessManager.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -58,6 +61,8 @@
 			isa = PBXGroup;
 			children = (
 				135E9B0221BE700300275E88 /* main.swift */,
+				13E189EC21BE8E1100111CFD /* Entitlements.entitlements */,
+				13E189ED21BF87C700111CFD /* ProcessManager.swift */,
 			);
 			path = stickWindow;
 			sourceTree = "<group>";
@@ -120,6 +125,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				135E9B0321BE700300275E88 /* main.swift in Sources */,
+				13E189EE21BF87C700111CFD /* ProcessManager.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -244,8 +250,11 @@
 		135E9B0721BE700300275E88 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				CODE_SIGN_IDENTITY = "Mac Developer";
 				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = F7YSRV5B7H;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE_SPECIFIER = "";
 				SWIFT_VERSION = 4.2;
 			};
 			name = Debug;
@@ -253,8 +262,11 @@
 		135E9B0821BE700300275E88 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				CODE_SIGN_IDENTITY = "Mac Developer";
 				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = F7YSRV5B7H;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE_SPECIFIER = "";
 				SWIFT_VERSION = 4.2;
 			};
 			name = Release;
