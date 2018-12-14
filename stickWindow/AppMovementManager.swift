@@ -14,7 +14,7 @@ class AppMovementManager {
     
     var oldPosition = CGPoint.zero
     
-    func getPosition(ofRunningApp app: NSRunningApplication) -> CGPoint {
+    func getPosition(ofRunningApp app: NSRunningApplication) -> CGPoint? {
         if let windowList = CGWindowListCopyWindowInfo([.optionOnScreenOnly], kCGNullWindowID) as? [[String: AnyObject]] {
             for window in windowList {
                 if let windowPID = window[kCGWindowOwnerPID as String] as? Int {
@@ -26,7 +26,7 @@ class AppMovementManager {
                 }
             }
         }
-        return CGPoint.zero
+        return nil
     }
     
     func moveWindow(ofApp attachedApp: NSRunningApplication, withApp masterApp: NSRunningApplication) {
@@ -38,7 +38,7 @@ class AppMovementManager {
             if let window = windowList.first
             {
                 var position : CFTypeRef
-                var newPoint = getPosition(ofRunningApp: masterApp)
+                guard var newPoint = getPosition(ofRunningApp: masterApp) else {return}
                 if newPoint != oldPosition {
                     position = AXValueCreate(AXValueType(rawValue: kAXValueCGPointType)!,&newPoint)!;
                     AXUIElementSetAttributeValue(window, kAXPositionAttribute as CFString, position);
@@ -46,5 +46,9 @@ class AppMovementManager {
                 oldPosition = newPoint
             }
         }
+    }
+    
+    func clearOldPosition() {
+        oldPosition = CGPoint.zero
     }
 }

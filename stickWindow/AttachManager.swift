@@ -46,11 +46,11 @@ class AttachManager {
         //    DispatchQueue.global(qos: .background).async {
         //    backgroundQueue.add .addOperation {
         if skypeForBusinessApp != nil {
-            while !AttachStatus.detach {
+//            while !AttachStatus.detach {
                 //            DispatchQueue.main.async {
                 movementManager.moveWindow(ofApp: vonageApp!, withApp: skypeForBusinessApp!)
                 //            }
-            }
+//            }
         }
         //    }
         //    }
@@ -79,7 +79,8 @@ class AttachManager {
             if let app = notification.userInfo?[NSWorkspace.applicationUserInfoKey] as? NSRunningApplication {
                 if app.localizedName == self?.skypeForBusiness {
                     p.debugPrint(propertyValue: "Skype app killed")
-                    self?.skypeForBusinessApp = app
+                    self?.skypeForBusinessApp = nil
+                    self?.movementManager.clearOldPosition()
                     AttachStatus.detach = true
                     //            backgroundQueue.cancelAllOperations()
                     //            attachWindow()
