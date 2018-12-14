@@ -9,6 +9,7 @@
 import Foundation
 
 struct CLICommandManager {
+    
     static func exitMain(withCode code: Int32 = 0) {
         exit(code)
     }
@@ -16,8 +17,8 @@ struct CLICommandManager {
     static func runMainWithoutExit() {
         RunLoop.main.run()
     }
+    
 }
-
 
 //Exit code guide
 //0

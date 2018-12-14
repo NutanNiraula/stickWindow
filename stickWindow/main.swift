@@ -15,6 +15,7 @@ attachManager.attachVonageWindowToSkypeIfSkypeIsLaunched()
 attachManager.attachVonageToSkypeOnLaunchingSkype()
 attachManager.detachVonageFromSkypeOnSkypeTermination()
 attachManager.exitOnVonageTermination()
+attachManager.observeActiveApp()
 
 CLICommandManager.runMainWithoutExit()
 

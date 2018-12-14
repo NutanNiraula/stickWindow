@@ -9,13 +9,11 @@
 import Foundation
 import Cocoa
 
-struct AttachStatus {
-    static var detach = false
-}
-
 class AttachManager {
+    
     var vonageApp: NSRunningApplication!
     var skypeForBusinessApp: NSRunningApplication?
+    var activeApp: NSRunningApplication?
     var movementManager: AppMovementManager!
     var processObserver: NotificationCenter!
     var backgroundQueue = OperationQueue()
@@ -38,22 +36,27 @@ class AttachManager {
             }
             if app.localizedName == skypeForBusiness {
                 skypeForBusinessApp = app
+                activeApp = skypeForBusinessApp
             }
         }
     }
     
     func attachVonageWindowToSkypeIfSkypeIsLaunched() {
-        //    DispatchQueue.global(qos: .background).async {
-        //    backgroundQueue.add .addOperation {
-        if skypeForBusinessApp != nil {
-//            while !AttachStatus.detach {
-                //            DispatchQueue.main.async {
-                movementManager.moveWindow(ofApp: vonageApp!, withApp: skypeForBusinessApp!)
-                //            }
-//            }
+        // This block of operations will be run in background thread
+        // Do not access main thread from within this block
+        let blockOperation = BlockOperation {
+            if self.skypeForBusinessApp != nil {
+                while true {
+                    guard let skype = self.skypeForBusinessApp else {return}
+                    if self.activeApp == skype {
+                        self.movementManager.moveWindow(ofAttachedApp: self.vonageApp!, withMasterApp: skype)
+                    } else if self.activeApp == self.vonageApp {
+                        self.movementManager.moveWindow(ofMasterApp: skype, withAttachedApp: self.vonageApp)
+                    }
+                }
+            }
         }
-        //    }
-        //    }
+        backgroundQueue.addOperation(blockOperation)
     }
     
     func attachVonageToSkypeOnLaunchingSkype() {
@@ -80,10 +83,21 @@ class AttachManager {
                 if app.localizedName == self?.skypeForBusiness {
                     p.debugPrint(propertyValue: "Skype app killed")
                     self?.skypeForBusinessApp = nil
-                    self?.movementManager.clearOldPosition()
-                    AttachStatus.detach = true
-                    //            backgroundQueue.cancelAllOperations()
-                    //            attachWindow()
+                    self?.movementManager.clearOldPositionOfMasterApp()
+                    self?.backgroundQueue.cancelAllOperations()
+                }
+            }
+        }
+    }
+    
+    func observeActiveApp() {
+        processObserver.addObserver(forName: NSWorkspace.didActivateApplicationNotification,
+                                    object: nil, // always NSWorkspace
+        queue: OperationQueue.main) { [weak self] (notification: Notification) in
+            if let app = notification.userInfo?[NSWorkspace.applicationUserInfoKey] as? NSRunningApplication {
+                if app.localizedName == self?.skypeForBusiness || app.localizedName == self?.vonage {
+                    p.debugPrint(propertyValue: "\(app.localizedName ?? "") is actively selected")
+                    self?.activeApp = app
                 }
             }
         }
