@@ -21,7 +21,7 @@ class AppMovementManager {
                 if let windowPID = window[kCGWindowOwnerPID as String] as? Int {
                     if app.processIdentifier == windowPID {
                         let bounds = CGRect(dictionaryRepresentation: window[kCGWindowBounds as String] as! CFDictionary)!
-                        return bounds//CGPoint(x: bounds.origin.x + bounds.width, y: bounds.origin.y)
+                        return bounds
                     }
                 }
             }
@@ -37,7 +37,7 @@ class AppMovementManager {
             if let window = windowList.first
             {
                 var position : CFTypeRef
-                    guard var newPositionOfAttachedApp = getNewPositionForAttachedApp(                                                                     fromMasterAppBounds: getBounds(ofRunningApp: masterApp)) else {return}
+                    guard var newPositionOfAttachedApp = getNewPositionForAttachedApp(fromMasterAppBounds: getBounds(ofRunningApp: masterApp)) else {return}
                     if newPositionOfAttachedApp != oldPositionOfAttachedApp {
                         position = AXValueCreate(AXValueType(rawValue: kAXValueCGPointType)!,&newPositionOfAttachedApp)!
                         AXUIElementSetAttributeValue(window, kAXPositionAttribute as CFString, position)

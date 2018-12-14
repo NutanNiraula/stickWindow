@@ -110,6 +110,7 @@ class AttachManager {
             if let app = notification.userInfo?[NSWorkspace.applicationUserInfoKey] as? NSRunningApplication {
                 if app.localizedName == self.vonage {
                     p.debugPrint(propertyValue: "Vonage app killed")
+                    self.backgroundQueue.cancelAllOperations()
                     CLICommandManager.exitMain()
                 }
             }
