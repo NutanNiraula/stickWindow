@@ -8,7 +8,11 @@
 
 /* Begin PBXBuildFile section */
 		135E9B0321BE700300275E88 /* main.swift in Sources */ = {isa = PBXBuildFile; fileRef = 135E9B0221BE700300275E88 /* main.swift */; };
-		13E189EE21BF87C700111CFD /* ProcessManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 13E189ED21BF87C700111CFD /* ProcessManager.swift */; };
+		138666FF21C363F900D45928 /* AppConfig.swift in Sources */ = {isa = PBXBuildFile; fileRef = 138666FE21C363F900D45928 /* AppConfig.swift */; };
+		1386670121C3667900D45928 /* AttachManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1386670021C3667900D45928 /* AttachManager.swift */; };
+		1386670321C36B6600D45928 /* PrintUtility.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1386670221C36B6600D45928 /* PrintUtility.swift */; };
+		1386670521C376D400D45928 /* CLISpecificCommands.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1386670421C376D400D45928 /* CLISpecificCommands.swift */; };
+		13E189EE21BF87C700111CFD /* AppMovementManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 13E189ED21BF87C700111CFD /* AppMovementManager.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -26,8 +30,12 @@
 /* Begin PBXFileReference section */
 		135E9AFF21BE700300275E88 /* stickWindow */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = stickWindow; sourceTree = BUILT_PRODUCTS_DIR; };
 		135E9B0221BE700300275E88 /* main.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = main.swift; sourceTree = "<group>"; };
+		138666FE21C363F900D45928 /* AppConfig.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppConfig.swift; sourceTree = "<group>"; };
+		1386670021C3667900D45928 /* AttachManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AttachManager.swift; sourceTree = "<group>"; };
+		1386670221C36B6600D45928 /* PrintUtility.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PrintUtility.swift; sourceTree = "<group>"; };
+		1386670421C376D400D45928 /* CLISpecificCommands.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CLISpecificCommands.swift; sourceTree = "<group>"; };
 		13E189EC21BE8E1100111CFD /* Entitlements.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = Entitlements.entitlements; sourceTree = "<group>"; };
-		13E189ED21BF87C700111CFD /* ProcessManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProcessManager.swift; sourceTree = "<group>"; };
+		13E189ED21BF87C700111CFD /* AppMovementManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppMovementManager.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -62,7 +70,11 @@
 			children = (
 				135E9B0221BE700300275E88 /* main.swift */,
 				13E189EC21BE8E1100111CFD /* Entitlements.entitlements */,
-				13E189ED21BF87C700111CFD /* ProcessManager.swift */,
+				13E189ED21BF87C700111CFD /* AppMovementManager.swift */,
+				138666FE21C363F900D45928 /* AppConfig.swift */,
+				1386670421C376D400D45928 /* CLISpecificCommands.swift */,
+				1386670021C3667900D45928 /* AttachManager.swift */,
+				1386670221C36B6600D45928 /* PrintUtility.swift */,
 			);
 			path = stickWindow;
 			sourceTree = "<group>";
@@ -124,8 +136,12 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				1386670521C376D400D45928 /* CLISpecificCommands.swift in Sources */,
+				138666FF21C363F900D45928 /* AppConfig.swift in Sources */,
+				1386670321C36B6600D45928 /* PrintUtility.swift in Sources */,
 				135E9B0321BE700300275E88 /* main.swift in Sources */,
-				13E189EE21BF87C700111CFD /* ProcessManager.swift in Sources */,
+				1386670121C3667900D45928 /* AttachManager.swift in Sources */,
+				13E189EE21BF87C700111CFD /* AppMovementManager.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
