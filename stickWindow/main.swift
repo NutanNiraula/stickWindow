@@ -11,6 +11,7 @@ import Cocoa
 
 let attachManager = AttachManager(withMovementManager: AppMovementManager(), processObserver: NSWorkspace.shared.notificationCenter)
 attachManager.assignActiveApps()
+attachManager.attachVonageToSkypeOnLaunchingVonage()
 attachManager.attachVonageWindowToSkypeIfSkypeIsLaunched()
 attachManager.attachVonageToSkypeOnLaunchingSkype()
 attachManager.detachVonageFromSkypeOnSkypeTermination()

@@ -11,7 +11,7 @@ import Foundation
 //TODO: change this to bundle id
 struct AppLocalName {
     static var skypeForBusiness = "Skype for Business"
-    static var vonage = "Notes"
+    static var vonage = "Electron"
 }
 
 struct DebugMode {

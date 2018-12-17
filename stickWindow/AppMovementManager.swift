@@ -34,8 +34,7 @@ class AppMovementManager {
         var value: AnyObject?
         let result = AXUIElementCopyAttributeValue(appRef, kAXWindowsAttribute as CFString, &value)
         if let windowList = value as? [AXUIElement], result == AXError.success {
-            if let window = windowList.first
-            {
+            if let window = windowList.first {
                 var position : CFTypeRef
                     guard var newPositionOfAttachedApp = getNewPositionForAttachedApp(fromMasterAppBounds: getBounds(ofRunningApp: masterApp)) else {return}
                     if newPositionOfAttachedApp != oldPositionOfAttachedApp {

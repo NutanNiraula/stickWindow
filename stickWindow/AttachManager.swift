@@ -21,6 +21,8 @@ class AttachManager {
     private let vonage = AppLocalName.vonage
     private let skypeForBusiness = AppLocalName.skypeForBusiness
     
+    var timer: Timer!
+    
     typealias p = PrintUtility
     
     init(withMovementManager mManager: AppMovementManager, processObserver pObserver: NotificationCenter) {
@@ -44,19 +46,24 @@ class AttachManager {
     func attachVonageWindowToSkypeIfSkypeIsLaunched() {
         // This block of operations will be run in background thread
         // Do not access main thread from within this block
-        let blockOperation = BlockOperation {
+//        let blockOperation = BlockOperation {
             if self.skypeForBusinessApp != nil {
-                while true {
-                    guard let skype = self.skypeForBusinessApp else {return}
-                    if self.activeApp == skype {
-                        self.movementManager.moveWindow(ofAttachedApp: self.vonageApp!, withMasterApp: skype)
-                    } else if self.activeApp == self.vonageApp {
-                        self.movementManager.moveWindow(ofMasterApp: skype, withAttachedApp: self.vonageApp)
-                    }
-                }
+//                while true {
+//                    moveWindow()
+                self.timer = Timer.scheduledTimer(timeInterval: 0.02, target: self, selector: #selector(self.moveWindow), userInfo: nil, repeats: true)
+//                }
             }
+//        }
+//        backgroundQueue.addOperation(blockOperation)
+    }
+    
+    @objc func moveWindow() {
+        guard let skype = self.skypeForBusinessApp else {return}
+        if self.activeApp == skype && self.vonageApp != nil {
+            self.movementManager.moveWindow(ofAttachedApp: self.vonageApp!, withMasterApp: skype)
+        } else if self.activeApp == self.vonageApp {
+            self.movementManager.moveWindow(ofMasterApp: skype, withAttachedApp: self.vonageApp)
         }
-        backgroundQueue.addOperation(blockOperation)
     }
     
     func attachVonageToSkypeOnLaunchingSkype() {
@@ -75,6 +82,22 @@ class AttachManager {
         }
     }
     
+    func attachVonageToSkypeOnLaunchingVonage() {
+        processObserver.addObserver(forName: NSWorkspace.didLaunchApplicationNotification,
+                                    object: nil, // always NSWorkspace
+        queue: OperationQueue.main) { [weak self] (notification: Notification) in
+            if let app = notification.userInfo?[NSWorkspace.applicationUserInfoKey] as? NSRunningApplication {
+                if app.localizedName == self?.vonage {
+                    p.debugPrint(propertyValue: "Vonage launched")
+                    self?.vonageApp = app
+                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.5, execute: {
+                        self?.attachVonageWindowToSkypeIfSkypeIsLaunched()
+                    })
+                }
+            }
+        }
+    }
+    
     func detachVonageFromSkypeOnSkypeTermination() {
         processObserver.addObserver(forName: NSWorkspace.didTerminateApplicationNotification,
                                     object: nil, // always NSWorkspace
@@ -84,6 +107,7 @@ class AttachManager {
                     p.debugPrint(propertyValue: "Skype app killed")
                     self?.skypeForBusinessApp = nil
                     self?.movementManager.clearOldPositionOfMasterApp()
+                    self?.timer.invalidate()
                     self?.backgroundQueue.cancelAllOperations()
                 }
             }
@@ -110,6 +134,7 @@ class AttachManager {
             if let app = notification.userInfo?[NSWorkspace.applicationUserInfoKey] as? NSRunningApplication {
                 if app.localizedName == self.vonage {
                     p.debugPrint(propertyValue: "Vonage app killed")
+                    self.timer.invalidate()
                     self.backgroundQueue.cancelAllOperations()
                     CLICommandManager.exitMain()
                 }
