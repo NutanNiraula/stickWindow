@@ -8,20 +8,32 @@
 
 import Foundation
 import Cocoa
+import ApplicationServices
 
 class AttachManager {
     
-    var vonageApp: NSRunningApplication!
-    var skypeForBusinessApp: NSRunningApplication?
+    var vonageApp: NSRunningApplication! //{
+//        didSet {
+//            observeMouseActionOnProcessId(processId: vonageApp.processIdentifier)
+//        }
+//    }
+    var count = 0
+    var skypeForBusinessApp: NSRunningApplication? {
+        didSet {
+            if let pid = skypeForBusinessApp?.processIdentifier {
+                observeMouseActionOnProcessId(processId: pid)
+                count = count + 1
+                p.debugPrint(propertyValue: "\(count)")
+            }
+        }
+    }
     var activeApp: NSRunningApplication?
     var movementManager: AppMovementManager!
     var processObserver: NotificationCenter!
-    var backgroundQueue = OperationQueue()
+    //    var backgroundQueue = OperationQueue() //if used cancelAllOperation from background queue on completion
     
     private let vonage = AppLocalName.vonage
     private let skypeForBusiness = AppLocalName.skypeForBusiness
-    
-    var timer: Timer!
     
     typealias p = PrintUtility
     
@@ -43,26 +55,14 @@ class AttachManager {
         }
     }
     
-    func attachVonageWindowToSkypeIfSkypeIsLaunched() {
-        // This block of operations will be run in background thread
-        // Do not access main thread from within this block
-//        let blockOperation = BlockOperation {
-            if self.skypeForBusinessApp != nil {
-//                while true {
-//                    moveWindow()
-                self.timer = Timer.scheduledTimer(timeInterval: 0.02, target: self, selector: #selector(self.moveWindow), userInfo: nil, repeats: true)
-//                }
+     func attachVonageWindowToSkypeIfSkypeIsLaunched() {
+        if skypeForBusinessApp != nil {
+            guard let skype = skypeForBusinessApp else {return}
+            if activeApp == skype && vonageApp != nil {
+                movementManager.moveWindow(ofAttachedApp: vonageApp!, withMasterApp: skype)
+            } else if activeApp == vonageApp {
+                movementManager.moveWindow(ofMasterApp: skype, withAttachedApp: vonageApp)
             }
-//        }
-//        backgroundQueue.addOperation(blockOperation)
-    }
-    
-    @objc func moveWindow() {
-        guard let skype = self.skypeForBusinessApp else {return}
-        if self.activeApp == skype && self.vonageApp != nil {
-            self.movementManager.moveWindow(ofAttachedApp: self.vonageApp!, withMasterApp: skype)
-        } else if self.activeApp == self.vonageApp {
-            self.movementManager.moveWindow(ofMasterApp: skype, withAttachedApp: self.vonageApp)
         }
     }
     
@@ -107,8 +107,6 @@ class AttachManager {
                     p.debugPrint(propertyValue: "Skype app killed")
                     self?.skypeForBusinessApp = nil
                     self?.movementManager.clearOldPositionOfMasterApp()
-                    self?.timer.invalidate()
-                    self?.backgroundQueue.cancelAllOperations()
                 }
             }
         }
@@ -134,12 +132,51 @@ class AttachManager {
             if let app = notification.userInfo?[NSWorkspace.applicationUserInfoKey] as? NSRunningApplication {
                 if app.localizedName == self.vonage {
                     p.debugPrint(propertyValue: "Vonage app killed")
-                    self.timer.invalidate()
-                    self.backgroundQueue.cancelAllOperations()
                     CLICommandManager.exitMain()
                 }
             }
         }
     }
     
+    func observeMouseActionOnProcessId(processId pid: pid_t) {
+        
+        let callback: CGEventTapCallBack =  { (tapProxy, eventType, event, refcon) -> Unmanaged<CGEvent>? in
+//            p.debugPrint(propertyName: "Mouse Location:", propertyValue: "\(event.location))")
+            // This code below will attempt to convert unsafe pointer object to specific type but since from within this callback self cannot be captured bridge function needs to be implemented locally here
+            let attachManagerSelf = Unmanaged<AttachManager>.fromOpaque(refcon!).takeUnretainedValue()
+            attachManagerSelf.attachVonageWindowToSkypeIfSkypeIsLaunched()
+            return nil
+        }
+        
+        let eventMask = (1 << CGEventType.leftMouseDragged.rawValue) //| (1 << CGEventType.leftMouseDown.rawValue) // do not mask mousedown as it will hijack mouse event from skype for business
+        
+        
+        //userInfo is an unsafePointer that will be passed to callback parameter later on so, passing self's pointer here and unwrapping it inside the C callback I can call swift function from within c pointer callback
+        let machPort = CGEvent.tapCreateForPid(pid: pid, place: .tailAppendEventTap, options: .defaultTap, eventsOfInterest: CGEventMask(eventMask), callback: callback, userInfo: bridge(obj: self))!
+        
+        let runLoopSource = CFMachPortCreateRunLoopSource(kCFAllocatorDefault, machPort, 0)
+        CFRunLoopAddSource(CFRunLoopGetCurrent(), runLoopSource, .commonModes)
+        CGEvent.tapEnable(tap: machPort, enable: true)
+    }
+}
+
+extension AttachManager {
+    // converting unsafe pointer from c to self and vice versa
+    // copied from https://stackoverflow.com/questions/33294620/how-to-cast-self-to-unsafemutablepointervoid-type-in-swift
+    //modified the code to pass unsafemutablerawPointer rather than unsafeRawPointer
+    func bridge<T : AnyObject>(obj : T) -> UnsafeMutableRawPointer {
+       return Unmanaged.passUnretained(obj).toOpaque()
+    }
+    
+    func bridge<T : AnyObject>(ptr : UnsafeMutableRawPointer) -> T {
+        return Unmanaged<T>.fromOpaque(ptr).takeUnretainedValue()
+    }
+    //retained versions are not used currently
+    func bridgeRetained<T : AnyObject>(obj : T) -> UnsafeMutableRawPointer {
+        return Unmanaged.passRetained(obj).toOpaque()
+    }
+    
+    func bridgeTransfer<T : AnyObject>(ptr : UnsafeMutableRawPointer) -> T {
+        return Unmanaged<T>.fromOpaque(ptr).takeRetainedValue()
+    }
 }

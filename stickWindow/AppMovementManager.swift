@@ -12,8 +12,8 @@ import Cocoa
 
 class AppMovementManager {
     
-    var oldPositionOfMasterApp = CGPoint.zero
-    var oldPositionOfAttachedApp = CGPoint.zero
+//    var oldPositionOfMasterApp = CGPoint.zero
+//    var oldPositionOfAttachedApp = CGPoint.zero
     
     func getBounds(ofRunningApp app: NSRunningApplication) -> CGRect? {
         if let windowList = CGWindowListCopyWindowInfo([.optionOnScreenOnly], kCGNullWindowID) as? [[String: AnyObject]] {
@@ -37,11 +37,11 @@ class AppMovementManager {
             if let window = windowList.first {
                 var position : CFTypeRef
                     guard var newPositionOfAttachedApp = getNewPositionForAttachedApp(fromMasterAppBounds: getBounds(ofRunningApp: masterApp)) else {return}
-                    if newPositionOfAttachedApp != oldPositionOfAttachedApp {
+//                    if newPositionOfAttachedApp != oldPositionOfAttachedApp {
                         position = AXValueCreate(AXValueType(rawValue: kAXValueCGPointType)!,&newPositionOfAttachedApp)!
                         AXUIElementSetAttributeValue(window, kAXPositionAttribute as CFString, position)
-                        oldPositionOfAttachedApp = newPositionOfAttachedApp
-                    }
+//                        oldPositionOfAttachedApp = newPositionOfAttachedApp
+//                    }
             }
         }
     }
@@ -55,11 +55,11 @@ class AppMovementManager {
             {
                 var position : CFTypeRef
                 guard var newPositionOfMasterApp = getNewPositionForMasterApp(fromAttachedAppBounds: getBounds(ofRunningApp: attachedApp),                                                                                  andMasterAppBounds: getBounds(ofRunningApp: masterApp)) else {return}
-                if newPositionOfMasterApp != oldPositionOfMasterApp {
+//                if newPositionOfMasterApp != oldPositionOfMasterApp {
                     position = AXValueCreate(AXValueType(rawValue: kAXValueCGPointType)!,&newPositionOfMasterApp)!
                     AXUIElementSetAttributeValue(window, kAXPositionAttribute as CFString, position)
-                    oldPositionOfMasterApp = newPositionOfMasterApp
-                }
+//                    oldPositionOfMasterApp = newPositionOfMasterApp
+//                }
             }
         }
     }
@@ -81,7 +81,7 @@ class AppMovementManager {
     }
     
     func clearOldPositionOfMasterApp() {
-        oldPositionOfMasterApp = CGPoint.zero
+//        oldPositionOfMasterApp = CGPoint.zero
     }
 
 }
