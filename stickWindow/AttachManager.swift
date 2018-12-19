@@ -98,6 +98,36 @@ class AttachManager {
         }
     }
     
+    func attachVonageToSkypeOnUnhidingSkype() {
+        processObserver.addObserver(forName: NSWorkspace.didUnhideApplicationNotification,
+                                    object: nil, // always NSWorkspace
+        queue: OperationQueue.main) { [weak self] (notification: Notification) in
+            if let app = notification.userInfo?[NSWorkspace.applicationUserInfoKey] as? NSRunningApplication {
+                if app.localizedName == self?.skypeForBusiness {
+                    p.debugPrint(propertyValue: "Skype Unhidden")
+                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.5, execute: {
+                        self?.attachVonageWindowToSkypeIfSkypeIsLaunched()
+                    })
+                }
+            }
+        }
+    }
+    
+    func attachSkypeToVonageOnUnhidingVonage() {
+        processObserver.addObserver(forName: NSWorkspace.didUnhideApplicationNotification,
+                                    object: nil, // always NSWorkspace
+        queue: OperationQueue.main) { [weak self] (notification: Notification) in
+            if let app = notification.userInfo?[NSWorkspace.applicationUserInfoKey] as? NSRunningApplication {
+                if app.localizedName == self?.vonage {
+                    p.debugPrint(propertyValue: "Vonage Unhidden")
+                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.5, execute: {
+                        self?.attachVonageWindowToSkypeIfSkypeIsLaunched()
+                    })
+                }
+            }
+        }
+    }
+    
     func detachVonageFromSkypeOnSkypeTermination() {
         processObserver.addObserver(forName: NSWorkspace.didTerminateApplicationNotification,
                                     object: nil, // always NSWorkspace

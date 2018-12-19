@@ -18,5 +18,9 @@ attachManager.detachVonageFromSkypeOnSkypeTermination()
 attachManager.exitOnVonageTermination()
 attachManager.observeActiveApp()
 
+//MARK: special cases
+attachManager.attachVonageToSkypeOnUnhidingSkype()
+attachManager.attachSkypeToVonageOnUnhidingVonage()
+
 CLICommandManager.runMainWithoutExit()
 
